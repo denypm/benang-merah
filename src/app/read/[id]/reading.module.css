@@ -1,0 +1,285 @@
+.readingLayout {
+  background: var(--bg-paper);
+  min-height: 100vh;
+  padding: 100px 0 4rem;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  transition: var(--transition-smooth);
+}
+
+.focusActive {
+  background: var(--bg-paper-warm);
+}
+
+.focusActive .header {
+  text-align: center;
+}
+
+/* Loading */
+.loadingScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 1.5rem;
+}
+
+.loadingThread {
+  width: 120px;
+  height: 1.5px;
+  background: var(--accent-crimson);
+  animation: threadPulse 2s ease-in-out infinite;
+}
+
+@keyframes threadPulse {
+  0%, 100% { transform: scaleX(0.3); opacity: 0.3; }
+  50% { transform: scaleX(1); opacity: 0.8; }
+}
+
+.loadingText {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  color: var(--text-faint);
+  font-style: italic;
+  margin: 0;
+}
+
+/* Vertical Crimson Thread — Progress */
+.verticalThread {
+  position: fixed;
+  left: 2rem;
+  top: 56px;
+  bottom: 0;
+  width: 2px;
+  background: var(--border-hairline);
+  z-index: 50;
+}
+
+.verticalThreadFill {
+  width: 100%;
+  background: var(--accent-crimson);
+  transition: height 0.15s linear;
+  border-radius: 0 0 1px 1px;
+  opacity: 0.6;
+}
+
+/* Article */
+.article {
+  max-width: var(--max-width);
+  width: 100%;
+  padding: 0 1.5rem;
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header */
+.header {
+  margin-bottom: 3rem;
+}
+
+.backLink {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  color: var(--text-faint);
+  text-decoration: none;
+  margin-bottom: 2.5rem;
+  transition: var(--transition-fast);
+}
+
+.backLink:hover {
+  color: var(--accent-crimson);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text-ink);
+  margin-bottom: 1.25rem;
+}
+
+.meta {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.headerThread {
+  width: 100%;
+  height: 1px;
+  background: var(--accent-crimson);
+  opacity: 0.3;
+  margin-bottom: 1.5rem;
+}
+
+.focusBtn {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-faint);
+  background: none;
+  border: 1px solid var(--border-light);
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  letter-spacing: 0.03em;
+}
+
+.focusBtn:hover {
+  border-color: var(--accent-crimson);
+  color: var(--accent-crimson);
+}
+
+/* Content */
+.content {
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  line-height: 1.85;
+  color: var(--text-main);
+}
+
+.paraWrap {
+  position: relative;
+  margin-bottom: 0.25rem;
+  padding: 1rem 1rem 1rem 1.25rem;
+  cursor: default;
+  transition: var(--transition-fast);
+  border-left: 2px solid transparent;
+}
+
+.paraHasNote {
+  cursor: pointer;
+}
+
+.paraHasNote:hover {
+  background: var(--accent-crimson-light);
+  border-left-color: var(--accent-crimson);
+}
+
+.paraActive {
+  background: var(--accent-crimson-light);
+  border-left-color: var(--accent-crimson);
+}
+
+.paragraph {
+  margin: 0;
+  color: var(--text-main);
+}
+
+/* Annotation */
+.annotation {
+  margin-top: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--bg-card);
+  border-left: 2px solid var(--accent-crimson);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.annotationLabel {
+  display: block;
+  font-weight: 700;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-crimson);
+  margin-bottom: 0.35rem;
+}
+
+.annotationText {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+/* Article End */
+.articleEnd {
+  text-align: center;
+  margin-top: 4rem;
+  padding-top: 3rem;
+}
+
+.endThread {
+  width: 40px;
+  height: 1px;
+  background: var(--accent-crimson);
+  margin: 0 auto 1.5rem;
+  opacity: 0.4;
+}
+
+.endText {
+  font-family: var(--font-serif);
+  font-size: 0.85rem;
+  color: var(--text-faint);
+  font-style: italic;
+  margin-bottom: 1.5rem;
+}
+
+.endLink {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  color: var(--accent-crimson);
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--transition-fast);
+}
+
+.endLink:hover {
+  text-decoration: underline;
+}
+
+/* Exit Focus */
+.exitFocus {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  color: var(--text-faint);
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  opacity: 0.3;
+  transition: var(--transition-fast);
+}
+
+.exitFocus:hover {
+  opacity: 1;
+  border-color: var(--accent-crimson);
+  color: var(--accent-crimson);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .verticalThread {
+    left: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .readingLayout {
+    padding-top: 80px;
+  }
+
+  .content {
+    font-size: 1.02rem;
+    line-height: 1.8;
+  }
+
+  .verticalThread {
+    display: none;
+  }
+}
