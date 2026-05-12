@@ -3,7 +3,7 @@
 import React, { useEffect, useState, use } from "react";
 import styles from "../gelanggang.module.css";
 import Link from "next/link";
-import { mockCompetitions } from "@/utils/mockData";
+import { createClient } from "@/utils/supabase/client";
 import Navbar from "@/components/Navbar";
 
 export default function GelanggangDetail({ params }: { params: Promise<{ id: string }> }) {
@@ -11,11 +11,19 @@ export default function GelanggangDetail({ params }: { params: Promise<{ id: str
   const [comp, setComp] = useState<any>(null);
 
   useEffect(() => {
-    // In real app, fetch from Supabase
-    const found = mockCompetitions.find((c) => c.id === id);
-    if (found) {
-      setComp(found);
+    async function fetchCompetition() {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from('competitions')
+        .select('*')
+        .eq('id', id)
+        .single();
+        
+      if (!error && data) {
+        setComp(data);
+      }
     }
+    fetchCompetition();
   }, [id]);
 
   if (!comp) {

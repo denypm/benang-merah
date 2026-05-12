@@ -4,11 +4,10 @@ import React, { useEffect, useState } from "react";
 import styles from "./gelanggang.module.css";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
-import { mockCompetitions } from "@/utils/mockData";
 import Navbar from "@/components/Navbar";
 
 export default function GelanggangPage() {
-  const [competitions, setCompetitions] = useState<any[]>(mockCompetitions);
+  const [competitions, setCompetitions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,7 +23,7 @@ export default function GelanggangPage() {
           setCompetitions(data);
         }
       } catch {
-        // Fallback to mock data
+        console.error("Gagal memuat gelanggang");
       } finally {
         setLoading(false);
       }

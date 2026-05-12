@@ -4,15 +4,6 @@ import React, { useState, useEffect, useCallback, use } from "react";
 import styles from "./reading.module.css";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
-import { mockArticles } from "@/utils/mockData";
-
-const mockContent = [
-  { id: 1, text: "Dahulu, membaca adalah sebuah ritual. Kita menyiapkan segelas teh, duduk di kursi rotan, dan membiarkan jemari kita menelusuri serat kertas. Namun kini, membaca telah berubah menjadi aktivitas berburu. Kita berburu kata kunci, berburu kesimpulan, dan berburu kepuasan instan." },
-  { id: 2, text: "Algoritma media sosial telah melatih otak kita untuk menolak jeda. Setiap kali ada kekosongan, mesin akan segera mengisinya dengan kebisingan baru. Dalam kondisi seperti ini, bagaimana sastra bisa bertahan?" },
-  { id: 3, text: "Sastra bukan tentang 'apa yang terjadi', melainkan 'bagaimana hal itu dirasakan'. Ia membutuhkan waktu. Ia membutuhkan kesediaan untuk tersesat di dalam labirin kata. Tanpa itu, kita hanya sedang memindai, bukan membaca." },
-  { id: 4, text: "Ada keindahan dalam kelambatan. Saat kita memutuskan untuk benar-benar duduk bersama sebuah teks, membiarkan diri kita terserap ke dalam setiap metafora, setiap jeda—di situlah sastra mulai bekerja. Ia mengubah cara kita melihat dunia." },
-  { id: 5, text: "Benang merah yang menghubungkan pembaca dan penulis bukanlah kecepatan, melainkan kedalaman. Seperti akar pohon yang tak terlihat, koneksi itu tumbuh dalam keheningan, dalam ruang antara kata-kata yang tak terucapkan." },
-];
 
 const mockAnnotations = [
   { blockId: "block-1", author: "Kurator", text: "Perbandingan antara 'ritual' dan 'berburu' memberikan kontras yang kuat sejak awal." },
@@ -84,31 +75,17 @@ export default function ReadingPage({ params }: { params: Promise<{ id: string }
         const supabase = createClient();
         const { data, error } = await supabase
           .from("articles")
-          .select("*")
+          .select("*, profiles(full_name)")
           .eq("id", id)
           .single();
 
         if (!error && data) {
           setArticle(data);
         } else {
-          const mock = mockArticles.find(a => a.id === id) || mockArticles[0];
-          setArticle({
-            title: mock.title,
-            author_name: mock.author_name,
-            mood: mock.mood,
-            created_at: mock.created_at,
-            content_full: { type: "doc", content: mockContent.map((c, i) => ({ type: "paragraph", attrs: { id: `block-${i}` }, content: [{ type: "text", text: c.text }] })) }
-          });
+          setArticle(null); // or set some error state
         }
       } catch {
-        const mock = mockArticles.find(a => a.id === id) || mockArticles[0];
-        setArticle({
-          title: mock.title,
-          author_name: mock.author_name,
-          mood: mock.mood,
-          created_at: mock.created_at,
-          content_full: { type: "doc", content: mockContent.map((c, i) => ({ type: "paragraph", attrs: { id: `block-${i}` }, content: [{ type: "text", text: c.text }] })) }
-        });
+        setArticle(null);
       }
     }
     fetchArticle();
@@ -161,7 +138,7 @@ export default function ReadingPage({ params }: { params: Promise<{ id: string }
           <h1 className={styles.title}>{article.title}</h1>
 
           <div className={styles.meta}>
-            <span>Oleh: {article.author_name || "Penulis"}</span>
+            <span>Oleh: {article.profiles?.full_name || "Penulis"}</span>
           </div>
 
           {/* Red thread divider */}
@@ -176,7 +153,7 @@ export default function ReadingPage({ params }: { params: Promise<{ id: string }
 
         {/* Content */}
         <section className={styles.content}>
-          {article.content_full?.content?.map((block: any, index: number) => 
+          {article.content?.content?.map((block: any, index: number) => 
             renderBlock(block, index, annotations, activeNote, setActiveNote)
           )}
         </section>

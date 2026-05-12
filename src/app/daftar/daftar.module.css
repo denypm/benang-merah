@@ -1,0 +1,335 @@
+/* ========== AUTH PAGE — Modern Bauhaus Editorial ========== */
+
+/* Fonts: Epilogue (headline) + Work Sans (body/label) */
+@import url('https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800;900&family=Work+Sans:wght@400;500;600&display=swap');
+
+.page {
+  min-height: 100vh;
+  background-color: #F9F9F7;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Work Sans', sans-serif;
+}
+
+/* ========== BACKGROUND GEOMETRY ========== */
+.geoCircle {
+  position: fixed;
+  top: 80px;
+  right: -100px;
+  width: 260px;
+  height: 260px;
+  background: #FCD400;
+  border-radius: 50%;
+  opacity: 0.2;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.geoSquare {
+  position: fixed;
+  bottom: -50px;
+  left: -50px;
+  width: 200px;
+  height: 200px;
+  background: #3277C5;
+  opacity: 0.1;
+  transform: rotate(12deg);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ========== TOP APP BAR ========== */
+.topBar {
+  position: relative;
+  background: #FFFFFF;
+  z-index: 50;
+}
+
+.topBarInner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem;
+}
+
+.topBarBrand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: #1A1C1B;
+}
+
+.topBarBrand:hover {
+  color: #1A1C1B;
+}
+
+.brandIcon {
+  font-size: 1.25rem;
+  color: #BD001E;
+}
+
+.brandName {
+  font-family: 'Epilogue', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #1A1C1B;
+}
+
+.topBarLab {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-style: italic;
+  color: #BD001E;
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  transition: color 0.3s;
+}
+
+.topBarLab:hover {
+  color: #E61D2E;
+}
+
+/* Crimson line below header */
+.topBarThread {
+  width: 100%;
+  height: 2px;
+  background: #BD001E;
+}
+
+/* ========== MAIN ========== */
+.main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem;
+  position: relative;
+  z-index: 10;
+}
+
+.container {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+/* ========== HEADING ========== */
+.heading {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.title {
+  font-family: 'Epilogue', sans-serif;
+  font-size: clamp(2.5rem, 6vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: #1A1C1B;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.subtitle {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #5D3F3D;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ========== FORM CARD ========== */
+.formCard {
+  background: #FFFFFF;
+  padding: 2rem;
+  border: 2px solid #1A1C1B;
+  box-shadow: 8px 8px 0px 0px #1A1C1B;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #1A1C1B;
+  margin-bottom: 0.5rem;
+  transition: color 0.2s;
+}
+
+.field:focus-within .label {
+  color: #BD001E;
+}
+
+.input {
+  width: 100%;
+  background: #F9F9F7;
+  border: 2px solid #1A1C1B;
+  padding: 0.8rem 1rem;
+  font-family: 'Work Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #1A1C1B;
+  outline: none;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.input::placeholder {
+  color: #E7BDB9;
+}
+
+.input:focus {
+  border-color: #BD001E;
+  background: #FFFFFF;
+}
+
+/* Error */
+.errorMsg {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #BA1A1A;
+  background: #FFDAD6;
+  padding: 0.6rem 1rem;
+  border: 2px solid #BA1A1A;
+  margin: 0;
+}
+
+/* Submit Button */
+.submitBtn {
+  width: 100%;
+  padding: 1rem;
+  background: #BD001E;
+  color: #FFFFFF;
+  border: 2px solid #1A1C1B;
+  font-family: 'Work Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px 0px #1A1C1B;
+  transition: background-color 0.3s, transform 0.1s, box-shadow 0.1s;
+}
+
+.submitBtn:hover {
+  background: #E61D2E;
+}
+
+.submitBtn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px #1A1C1B;
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ========== THREAD MOTIF + LINKS ========== */
+.threadSection {
+  margin-top: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.threadLine {
+  width: 2px;
+  height: 48px;
+  background: #BD001E;
+  opacity: 0.5;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.threadDot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #BD001E;
+  border-radius: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.threadDot:first-child {
+  top: -4px;
+}
+
+.threadDot:last-child {
+  bottom: -4px;
+}
+
+.linkRow {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 220px;
+}
+
+.footerLink {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #5D3F3D;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footerLink:hover {
+  color: #BD001E;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 480px) {
+  .topBarInner {
+    padding: 1rem 1.25rem;
+  }
+
+  .brandName {
+    font-size: 1.3rem;
+  }
+
+  .formCard {
+    padding: 1.5rem;
+    box-shadow: 6px 6px 0px 0px #1A1C1B;
+  }
+
+  .title {
+    font-size: 2.2rem;
+  }
+
+  .main {
+    padding: 2rem 1.25rem;
+  }
+}
