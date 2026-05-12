@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import styles from "./daftar.module.css";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import { createClient } from "@/utils/supabase/client";
 
 export default function DaftarPage() {
   const [email, setEmail] = useState("");
@@ -24,8 +25,6 @@ export default function DaftarPage() {
     setIsLoading(true);
 
     try {
-      // Supabase auth integration placeholder
-      const { createClient } = await import("@/utils/supabase/client");
       const supabase = createClient();
       const { error: authError } = await supabase.auth.signUp({
         email,

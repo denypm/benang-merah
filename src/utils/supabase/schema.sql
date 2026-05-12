@@ -37,6 +37,7 @@ CREATE TABLE public.articles (
   read_time TEXT,
   likes_count INTEGER DEFAULT 0,
   comments_count INTEGER DEFAULT 0,
+  views_count INTEGER DEFAULT 0,
   featured BOOLEAN DEFAULT false,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
@@ -108,6 +109,63 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE OR REPLACE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
+
+-- 5. Create Bookmarks Table (Suaka)
+CREATE TABLE public.bookmarks (
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  article_id UUID REFERENCES public.articles(id) ON DELETE CASCADE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  PRIMARY KEY (user_id, article_id)
+);
+
+ALTER TABLE public.bookmarks ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users can view their own bookmarks." ON public.bookmarks FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert their own bookmarks." ON public.bookmarks FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can delete their own bookmarks." ON public.bookmarks FOR DELETE USING (auth.uid() = user_id);
+
+-- 6. Create Follows Table
+CREATE TABLE public.follows (
+  follower_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  following_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  PRIMARY KEY (follower_id, following_id)
+);
+
+ALTER TABLE public.follows ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Follows are viewable by everyone." ON public.follows FOR SELECT USING (true);
+CREATE POLICY "Users can follow others." ON public.follows FOR INSERT WITH CHECK (auth.uid() = follower_id);
+CREATE POLICY "Users can unfollow others." ON public.follows FOR DELETE USING (auth.uid() = follower_id);
+
+-- 7. Create Comments Table
+CREATE TABLE public.comments (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  article_id UUID REFERENCES public.articles(id) ON DELETE CASCADE NOT NULL,
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.comments ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Comments are viewable by everyone." ON public.comments FOR SELECT USING (true);
+CREATE POLICY "Users can insert comments." ON public.comments FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can delete their own comments." ON public.comments FOR DELETE USING (auth.uid() = user_id);
+
+-- 8. Create Notifications Table
+CREATE TABLE public.notifications (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL, -- The user receiving the notification
+  actor_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL, -- The user who did the action
+  type TEXT CHECK (type IN ('like', 'comment', 'follow')),
+  reference_id UUID, -- ID of the article or comment if applicable
+  is_read BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users can view their own notifications." ON public.notifications FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "System can insert notifications." ON public.notifications FOR INSERT WITH CHECK (true); -- In reality, you'd secure this with triggers or backend only
+CREATE POLICY "Users can update their own notifications (mark read)." ON public.notifications FOR UPDATE USING (auth.uid() = user_id);
+
 
 -- Insert Mock Competitions Data (Optional, for demo)
 INSERT INTO public.competitions (id, title, theme, description, status, prize, start_date, end_date)

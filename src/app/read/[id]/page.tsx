@@ -68,11 +68,19 @@ export default function ReadingPage({ params }: { params: Promise<{ id: string }
   const [progress, setProgress] = useState(0);
   const [article, setArticle] = useState<any>(null);
   const [annotations] = useState(mockAnnotations);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [likesCount, setLikesCount] = useState(0);
 
   useEffect(() => {
     async function fetchArticle() {
       try {
         const supabase = createClient();
+        
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) setUserId(user.id);
+
         const { data, error } = await supabase
           .from("articles")
           .select("*, profiles(full_name)")
@@ -81,8 +89,32 @@ export default function ReadingPage({ params }: { params: Promise<{ id: string }
 
         if (!error && data) {
           setArticle(data);
+          setLikesCount(data.likes_count || 0);
+
+          if (user) {
+            // Check if liked
+            const { data: likeData } = await supabase
+              .from("likes")
+              .select("*")
+              .eq("user_id", user.id)
+              .eq("article_id", id)
+              .single();
+            if (likeData) setIsLiked(true);
+
+            // Check if saved
+            const { data: saveData } = await supabase
+              .from("bookmarks")
+              .select("*")
+              .eq("user_id", user.id)
+              .eq("article_id", id)
+              .single();
+            if (saveData) setIsSaved(true);
+            
+            // Note: View counting should ideally be done via an RPC function to bypass RLS
+            // e.g. await supabase.rpc('increment_view', { article_id: id });
+          }
         } else {
-          setArticle(null); // or set some error state
+          setArticle(null);
         }
       } catch {
         setArticle(null);
@@ -90,6 +122,32 @@ export default function ReadingPage({ params }: { params: Promise<{ id: string }
     }
     fetchArticle();
   }, [id]);
+
+  const handleLike = async () => {
+    if (!userId) return alert("Anda harus masuk untuk menyukai.");
+    const supabase = createClient();
+    if (isLiked) {
+      await supabase.from("likes").delete().eq("user_id", userId).eq("article_id", id);
+      setIsLiked(false);
+      setLikesCount(prev => prev - 1);
+    } else {
+      await supabase.from("likes").insert({ user_id: userId, article_id: id });
+      setIsLiked(true);
+      setLikesCount(prev => prev + 1);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!userId) return alert("Anda harus masuk untuk menyimpan ke suaka.");
+    const supabase = createClient();
+    if (isSaved) {
+      await supabase.from("bookmarks").delete().eq("user_id", userId).eq("article_id", id);
+      setIsSaved(false);
+    } else {
+      await supabase.from("bookmarks").insert({ user_id: userId, article_id: id });
+      setIsSaved(true);
+    }
+  };
 
   const handleScroll = useCallback(() => {
     const winScroll = document.documentElement.scrollTop;
@@ -162,6 +220,24 @@ export default function ReadingPage({ params }: { params: Promise<{ id: string }
         <footer className={styles.articleEnd}>
           <div className={styles.endThread} />
           <p className={styles.endText}>— Akhir —</p>
+          
+          {!focusMode && (
+            <div className={styles.interactionBar}>
+              <button className={`${styles.interactionBtn} ${isLiked ? styles.activeInteraction : ''}`} onClick={handleLike}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill={isLiked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                {likesCount} Suka
+              </button>
+              <button className={styles.interactionBtn} onClick={() => alert("Fitur komentar akan segera hadir!")}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                Komentar
+              </button>
+              <button className={`${styles.interactionBtn} ${isSaved ? styles.activeInteraction : ''}`} onClick={handleSave}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill={isSaved ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path></svg>
+                {isSaved ? "Tersimpan" : "Suaka"}
+              </button>
+            </div>
+          )}
+
           <Link href="/" className={styles.endLink}>Kembali ke Beranda</Link>
         </footer>
       </article>

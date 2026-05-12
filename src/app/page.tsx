@@ -10,6 +10,7 @@ export default function Home() {
   const [articles, setArticles] = useState<any[]>([]);
   const [trendingArticles, setTrendingArticles] = useState<any[]>([]);
   const [competitions, setCompetitions] = useState<any[]>([]);
+  const [following, setFollowing] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState("Untuk Anda");
   const [isLoading, setIsLoading] = useState(true);
 
@@ -37,6 +38,24 @@ export default function Home() {
         setArticles(articleData);
         // Simple trending sort by likes (mocking trending)
         setTrendingArticles([...articleData].sort((a, b) => (b.likes_count || 0) - (a.likes_count || 0)).slice(0, 3));
+      }
+
+      // Fetch Following Authors
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: followsData } = await supabase
+          .from('follows')
+          .select('following_id, profiles!follows_following_id_fkey(full_name, avatar_url)')
+          .eq('follower_id', user.id);
+        
+        if (followsData) {
+          // Flatten structure
+          const formattedFollowing = followsData.map((f: any) => ({
+            id: f.following_id,
+            ...f.profiles
+          }));
+          setFollowing(formattedFollowing);
+        }
       }
 
       setIsLoading(false);
@@ -73,14 +92,24 @@ export default function Home() {
           <div className={styles.navGroup}>
             <h4 className={styles.navGroupTitle}>Penulis Diikuti</h4>
             <div className={styles.followingList}>
-              <div className={styles.followingItem}>
-                <div className={styles.avatarSmall}>RK</div>
-                <span>Raka Wijaya</span>
-              </div>
-              <div className={styles.followingItem}>
-                <div className={styles.avatarSmall} style={{background: 'var(--shape-green)'}}>TK</div>
-                <span>Tim Kurator</span>
-              </div>
+              {following.length === 0 ? (
+                <div style={{fontSize: "0.75rem", color: "var(--text-tertiary)"}}>Belum mengikuti siapa pun.</div>
+              ) : (
+                following.map((author) => (
+                  <Link href={`/profil/${author.id}`} key={author.id} style={{textDecoration: 'none', color: 'inherit'}}>
+                    <div className={styles.followingItem}>
+                      <div className={styles.avatarSmall}>
+                        {author.avatar_url ? (
+                          <img src={author.avatar_url} alt="" style={{width: '100%', height: '100%', borderRadius: '50%'}} />
+                        ) : (
+                          author.full_name?.charAt(0) || "P"
+                        )}
+                      </div>
+                      <span>{author.full_name || "Penulis"}</span>
+                    </div>
+                  </Link>
+                ))
+              )}
             </div>
           </div>
         </aside>

@@ -226,6 +226,46 @@
   margin-bottom: 1.5rem;
 }
 
+.interactionBar {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.interactionBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: 1px solid var(--border-medium);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.interactionBtn:hover {
+  background: var(--bg-paper-warm);
+  color: var(--text-ink);
+  border-color: var(--text-ink);
+}
+
+.activeInteraction {
+  color: var(--accent-crimson);
+  border-color: var(--accent-crimson);
+}
+
+.activeInteraction:hover {
+  background: rgba(200, 30, 30, 0.05);
+  color: var(--accent-crimson-bright);
+  border-color: var(--accent-crimson-bright);
+}
+
 .endLink {
   font-family: var(--font-sans);
   font-size: 0.8rem;

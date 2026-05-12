@@ -258,9 +258,6 @@ function WorkspaceContent() {
               <button className={styles.focusToggle} onClick={() => setIsFocusMode(true)}>
                 Zen
               </button>
-              <button className={styles.submitBtn} onClick={handleSubmit} id="submit-btn">
-                {compId ? "Kirim Lomba" : "Kirim Kurator"}
-              </button>
             </div>
           </div>
         )}
@@ -284,31 +281,30 @@ function WorkspaceContent() {
           />
           <div className={styles.canvasThread} />
           
+          
           {editor && (
-            <BubbleMenu editor={editor}>
-              <div className={styles.bubbleMenu}>
-                <button onClick={() => editor.chain().focus().toggleBold().run()} className={editor.isActive('bold') ? styles.bubbleBtnActive : styles.bubbleBtn}>
-                  <Bold size={16} />
-                </button>
-                <button onClick={() => editor.chain().focus().toggleItalic().run()} className={editor.isActive('italic') ? styles.bubbleBtnActive : styles.bubbleBtn}>
-                  <Italic size={16} />
-                </button>
-                <button onClick={() => editor.chain().focus().toggleStrike().run()} className={editor.isActive('strike') ? styles.bubbleBtnActive : styles.bubbleBtn}>
-                  <Strikethrough size={16} />
-                </button>
-                <div className={styles.bubbleDivider} />
-                <button onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} className={editor.isActive('heading', { level: 2 }) ? styles.bubbleBtnActive : styles.bubbleBtn}>
-                  <Heading2 size={16} />
-                </button>
-                <div className={styles.bubbleDivider} />
-                <button onClick={() => {
-                  const url = window.prompt('URL Gambar (Contoh: https://...):');
-                  if (url) editor.chain().focus().setImage({ src: url }).run();
-                }} className={styles.bubbleBtn}>
-                  <ImageIcon size={16} />
-                </button>
-              </div>
-            </BubbleMenu>
+            <div className={styles.staticToolbar}>
+              <button onClick={() => editor.chain().focus().toggleBold().run()} className={editor.isActive('bold') ? styles.toolbarBtnActive : styles.toolbarBtn} title="Tebal">
+                <Bold size={16} />
+              </button>
+              <button onClick={() => editor.chain().focus().toggleItalic().run()} className={editor.isActive('italic') ? styles.toolbarBtnActive : styles.toolbarBtn} title="Miring">
+                <Italic size={16} />
+              </button>
+              <button onClick={() => editor.chain().focus().toggleStrike().run()} className={editor.isActive('strike') ? styles.toolbarBtnActive : styles.toolbarBtn} title="Coret">
+                <Strikethrough size={16} />
+              </button>
+              <div className={styles.toolbarDivider} />
+              <button onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} className={editor.isActive('heading', { level: 2 }) ? styles.toolbarBtnActive : styles.toolbarBtn} title="Subjudul">
+                <Heading2 size={16} />
+              </button>
+              <div className={styles.toolbarDivider} />
+              <button onClick={() => {
+                const url = window.prompt('URL Gambar (Contoh: https://...):');
+                if (url) editor.chain().focus().setImage({ src: url }).run();
+              }} className={styles.toolbarBtn} title="Tambahkan Gambar">
+                <ImageIcon size={16} />
+              </button>
+            </div>
           )}
           
           <div className={styles.editorContainer}>
@@ -318,12 +314,17 @@ function WorkspaceContent() {
 
         {/* Bottom Status */}
         <div className={`${styles.bottomBar} ${isFocusMode ? styles.bottomBarFocus : ""}`}>
-          <span className={styles.wordCount}>
-            {wordCount} kata · ~{Math.ceil(wordCount / 200)} min baca
-          </span>
-          <span className={styles.lastSaved}>
-            {saveStatus === "saved" ? "Baru disimpan" : ""}
-          </span>
+          <div className={styles.bottomLeft}>
+            <span className={styles.wordCount}>
+              {wordCount} kata · ~{Math.ceil(wordCount / 200)} min baca
+            </span>
+            <span className={styles.lastSaved}>
+              {saveStatus === "saved" ? "Baru disimpan" : ""}
+            </span>
+          </div>
+          <button className={styles.submitBtnLarge} onClick={handleSubmit} id="submit-btn-large">
+            {compId ? "Kirim Lomba" : "Kirim Kurator"}
+          </button>
         </div>
       </main>
     </div>
