@@ -36,8 +36,9 @@ export default function MasukPage() {
       } else {
         window.location.href = "/";
       }
-    } catch {
-      setError("Gagal terhubung. Coba lagi nanti.");
+    } catch (err: any) {
+      console.error("Auth Exception:", err);
+      setError(err.message || "Gagal terhubung. Pastikan env Vercel sudah diset.");
     } finally {
       setIsLoading(false);
     }

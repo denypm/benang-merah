@@ -43,8 +43,9 @@ export default function DaftarPage() {
         alert("Pendaftaran berhasil! Silakan cek email Anda atau login langsung jika email konfirmasi dimatikan.");
         window.location.href = "/masuk";
       }
-    } catch {
-      setError("Gagal terhubung. Coba lagi nanti.");
+    } catch (err: any) {
+      console.error("Auth Exception:", err);
+      setError(err.message || "Gagal terhubung. Pastikan env Vercel sudah diset.");
     } finally {
       setIsLoading(false);
     }
