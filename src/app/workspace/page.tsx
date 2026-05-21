@@ -101,15 +101,23 @@ function WorkspaceContent() {
   }, [title, content]);
 
   const handleSave = useCallback(async (silent = false) => {
-    if (!title.trim() && !content.trim()) return;
+    if (!title.trim()) {
+      if (!silent) alert("Judul tidak boleh kosong.");
+      return;
+    }
+    if (!content.trim() || content === '<p></p>' || content === '{"type":"doc","content":[{"type":"paragraph"}]}') {
+      if (!silent) alert("Isi tulisan tidak boleh kosong.");
+      return;
+    }
     if (!userId) return;
     if (!silent) setSaveStatus("saving");
 
     try {
       const supabase = createClient();
+      const plainTextExcerpt = editor ? editor.getText().substring(0, 200) : "Draf tulisan";
       const payload: any = {
         title: title || "Tanpa Judul",
-        excerpt: content.substring(0, 200),
+        excerpt: plainTextExcerpt,
         content: JSON.parse(content),
         mood,
         status: "draft",
@@ -134,15 +142,26 @@ function WorkspaceContent() {
   }, [title, content, mood, userId, currentArticleId]);
 
   const handleSubmit = async () => {
-    if (!title.trim() || !content.trim()) return;
-    if (!userId) return;
+    if (!title.trim()) {
+      alert("Judul tidak boleh kosong sebelum dikirim.");
+      return;
+    }
+    if (!content.trim() || content === '<p></p>' || content === '{"type":"doc","content":[{"type":"paragraph"}]}') {
+      alert("Isi tulisan tidak boleh kosong sebelum dikirim.");
+      return;
+    }
+    if (!userId) {
+      alert("Anda harus masuk untuk mengirim tulisan.");
+      return;
+    }
     setSaveStatus("saving");
 
     try {
       const supabase = createClient();
+      const plainTextExcerpt = editor ? editor.getText().substring(0, 200) : "Karya tanpa cuplikan.";
       const payload: any = {
         title,
-        excerpt: content.substring(0, 200),
+        excerpt: plainTextExcerpt,
         content: JSON.parse(content),
         mood,
         status: "published",
