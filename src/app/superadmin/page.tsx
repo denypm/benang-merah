@@ -23,6 +23,18 @@ export default function SuperadminPage() {
           return;
         }
 
+        // Check role
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+          
+        if (!profile || profile.role !== "superadmin") {
+          window.location.href = "/";
+          return;
+        }
+
         // Fetch user count
         const { count: userCount } = await supabase
           .from("profiles")
